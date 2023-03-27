@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>THREE.js Example</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+  <script>
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // Create a sphere 
+    var playerGeometry = new THREE.SphereGeometry(1, 32, 32);
+    var playerMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var player = new THREE.Mesh(playerGeometry, playerMaterial);
+    scene.add(player);
+
+    // Create a third-person camera 
+    var thirdPersonCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    thirdPersonCamera.position.set(0, 0, 5);
+    thirdPersonCamera.lookAt(player.position);
+
+    // Create a first-person camera , camera position same the player
+    var firstPersonCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    firstPersonCamera.position.copy(player.position);
+
+    // Set camera to the third-person camera
+    var currentCamera = thirdPersonCamera;
+
+    // Switch between two cameras when presses a key
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "1") {
+        currentCamera = firstPersonCamera;
+        console.log("Switched to first-person camera");
+        console.log("First-person camera position: ", firstPersonCamera.position);
+        console.log("Player position: ", player.position);
+      } else if (event.key === "3") {
+        currentCamera = thirdPersonCamera;
+        console.log("Switched to third-person camera");
+        console.log("Third-person camera position: ", thirdPersonCamera.position);
+        console.log("Player position: ", player.position);
+      }
+    });
+
+    // Render the scene by current camera
+    var animate = function () {
+      requestAnimationFrame(animate);
+      renderer.render(scene, currentCamera);
+    };
+    animate();
+  </script>
+</body>
+
+</html>
